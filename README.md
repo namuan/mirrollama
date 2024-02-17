@@ -1,8 +1,11 @@
-# MirrOllama
+<p align="center">
+  <img src="https://github.com/namuan/mirrollama/raw/main/docs/images/app-logo.png" width="128px"/>
+</p>
+<h1 align="center">MirrOllama :: Multiplying the Power of Ollama models</h1>  
 
-Multiplying the Power of Ollama models
+#### Features
 
-#### TODO
+![MirrOllama](docs/images/mirrollama-screenshot.png)
 
 #### Development
 
