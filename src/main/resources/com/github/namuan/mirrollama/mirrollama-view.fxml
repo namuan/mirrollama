@@ -22,8 +22,8 @@
                 <children>
                     <ComboBox fx:id="selectModel2" onAction="#model2Changed" prefWidth="150.0"
                               promptText="Select model 2"/>
-                    <TextArea fx:id="txtModel2" prefHeight="200.0" prefWidth="200.0" text="Model 2"
-                              VBox.vgrow="ALWAYS"/>
+                    <TextArea fx:id="txtModel2" editable="false" prefHeight="200.0" prefWidth="200.0" text="Model 2"
+                              wrapText="true" VBox.vgrow="ALWAYS"/>
                 </children>
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
