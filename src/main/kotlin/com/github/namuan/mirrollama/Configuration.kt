@@ -71,11 +71,11 @@ fun saveSelectedModels(model1: String?, model2: String?, model3: String?) {
 fun loadSelectedModels(): Triple<String?, String?, String?> {
     if (File(propertiesFile).exists()) {
         val applicationProperties = Gson().fromJson(File(propertiesFile).readText(), ApplicationProperties::class.java)
-        val model1 = applicationProperties.selectedModel1
-        val model2 = applicationProperties.selectedModel2
-        val model3 = applicationProperties.selectedModel3
-        logger.debug { "Loaded selected models: $model1, $model2, $model3" }
-        return Triple(model1, model2, model3)
+        return Triple(
+            applicationProperties.selectedModel1,
+            applicationProperties.selectedModel2,
+            applicationProperties.selectedModel3
+        )
     }
     logger.debug { "No selected models found" }
     return Triple(null, null, null)

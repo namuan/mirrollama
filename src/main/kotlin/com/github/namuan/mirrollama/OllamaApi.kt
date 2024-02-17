@@ -21,16 +21,59 @@ data class StreamingOllamaResponse(
 data class OllamaRequest(
     val model: String,
     val prompt: String,
-    val system: String = "default-system",
-    val template: String = "default-template",
-    val context: List<Int> = emptyList(),
-    val stream: Boolean = false,
-    val raw: Boolean = false,
-    val images: List<String> = emptyList(),
-    val format: String = "",
-    val options: Map<String, Any> = emptyMap(),
-    val keepAlive: Any? = null
+    val system: String,
+    val template: String,
+    val context: List<Int>,
+    val stream: Boolean,
+    val raw: Boolean,
+    val images: List<String>,
+    val format: String,
+    val options: Map<String, Any>,
+    val keepAlive: Int?,
 )
+
+fun generate(
+    model: String,
+    prompt: String,
+    system: String = "",
+    template: String = "",
+    context: List<Int>? = null,
+    stream: Boolean = false,
+    raw: Boolean = false,
+    format: String = "",
+    images: List<String>? = null,
+    options: Map<String, Any>? = null,
+    keepAlive: Int? = null,
+    callback: (String) -> Unit,
+) {
+    require(model.isNotEmpty()) { "must provide a model" }
+
+    val ollamaRequest = OllamaRequest(
+        model = model,
+        prompt = prompt,
+        system = system,
+        template = template,
+        context = context ?: emptyList(),
+        stream = stream,
+        raw = raw,
+        format = format,
+        images = images ?: emptyList(),
+        options = options ?: emptyMap(),
+        keepAlive = keepAlive
+    )
+    val requestBody = gson.toJson(ollamaRequest)
+    val request = HttpRequest.newBuilder()
+        .header("Content-Type", "application/json")
+        .uri(URI.create("$OLLAMA_BASE/api/generate"))
+        .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+        .build()
+
+    val responseBody = sendRequest(request, HttpResponse.BodyHandlers.ofLines())
+    responseBody.map { it.trim() }.forEach {
+        val completionResponse = gson.fromJson(it, StreamingOllamaResponse::class.java)
+        callback(completionResponse.response)
+    }
+}
 
 data class ModelDetails(
     @SerializedName("parent_model")
@@ -55,56 +98,8 @@ data class ModelInfo(
 )
 
 data class ModelsResponse(
-    val models: List<ModelInfo>
+    val models: List<ModelInfo>,
 )
-
-fun generate(
-    model: String,
-    prompt: String,
-    system: String = "",
-    template: String = "",
-    context: List<Int>? = null,
-    stream: Boolean = false,
-    raw: Boolean = false,
-    format: String = "",
-    images: List<String>? = null,
-    options: Map<String, Any>? = null,
-    keepAlive: Any? = null,
-    callback: (String) -> Unit
-) {
-    require(model.isNotEmpty()) { "must provide a model" }
-
-    val ollamaRequest = OllamaRequest(
-        model = model,
-        prompt = prompt,
-        system = system,
-        template = template,
-        context = context ?: emptyList(),
-        stream = stream,
-        raw = raw,
-        format = format,
-        images = images ?: emptyList(),
-        options = options ?: emptyMap(),
-        keepAlive = keepAlive
-    )
-    val requestBody = gson.toJson(ollamaRequest)
-    logger.debug { "JSON Request: $requestBody" }
-
-    val request = HttpRequest.newBuilder()
-        .header("Content-Type", "application/json")
-        .uri(URI.create("$OLLAMA_BASE/api/generate"))
-        .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-        .build()
-
-    logger.debug { "[${ollamaRequest.model}] ▶\uFE0F Sending request to Ollama" }
-    val response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofLines())
-    val responseBody = response.body()
-    logger.debug { "[${ollamaRequest.model}] ◀\uFE0F Getting response from Ollama" }
-    responseBody.map { it.trim() }.forEach {
-        val completionResponse = gson.fromJson(it, StreamingOllamaResponse::class.java)
-        callback(completionResponse.response)
-    }
-}
 
 fun listModels(): List<String> {
     val request = HttpRequest.newBuilder()
@@ -112,15 +107,19 @@ fun listModels(): List<String> {
         .uri(URI.create("$OLLAMA_BASE/api/tags"))
         .GET()
         .build()
-    val response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString())
-    val responseBody = response.body()
-    logger.debug { "JSON Response: $responseBody" }
-    println(responseBody)
+    val responseBody = sendRequest(request, HttpResponse.BodyHandlers.ofString())
     val listModelsResponse = gson.fromJson(responseBody, ModelsResponse::class.java)
     return listModelsResponse.models.map { it.model }
 }
 
-class OllamaApiTask(
+private fun <T> sendRequest(request: HttpRequest?, bodyHandler: HttpResponse.BodyHandler<T>): T {
+    logger.debug { "▶ Sending request to Ollama: $request" }
+    val responseBody = HttpClient.newHttpClient().send(request, bodyHandler).body()
+    logger.debug { "◀ Getting response from Ollama" }
+    return responseBody
+}
+
+class OllamaCompletionApiTask(
     private val selectedModel: String,
     private val chatContext: String,
     private val callback: (String) -> Unit,
@@ -142,18 +141,13 @@ class OllamaModelsApiTask : Task<List<String>>() {
 }
 
 fun main() {
-
-    fun updateChatContext(response: String) {
-        println(response)
-    }
-
     generate(
         model = "mistral:latest",
         prompt = "Hello, how are you?",
         stream = true,
-        callback = ::updateChatContext,
+        callback = { print(it) },
     )
-
+    println("")
     val availableModels = listModels()
     println(availableModels)
 }

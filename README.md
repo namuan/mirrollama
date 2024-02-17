@@ -2,6 +2,8 @@
 
 Multiplying the Power of Ollama models
 
+#### TODO
+
 #### Development
 
 You'll need Java17 and JavaFX to build and run this application.

@@ -27,12 +27,8 @@ class MirrOllamaController {
     lateinit var btnSend: Button
 
     fun bindShortcuts() {
-        btnSend.assignShortcuts(KeyCode.S) {
-            btnSend.fire()
-        }
-        txtPrompt.assignShortcuts(KeyCode.I) {
-            txtPrompt.requestFocus()
-        }
+        btnSend.assignShortcuts(KeyCode.S) { btnSend.fire() }
+        txtPrompt.assignShortcuts(KeyCode.I) { txtPrompt.requestFocus() }
     }
 
     fun bindViewModel() {
@@ -59,56 +55,26 @@ class MirrOllamaController {
         chatViewModel.clearChatHistory()
 
         val chatContext: String = chatViewModel.safePrompt()
-        val selectedOllamaModel1: String = selectModel1.selectionModel.selectedItem
-        val task1 = OllamaApiTask(selectedOllamaModel1, chatContext, ::updateChatContext1)
-        task1.setOnSucceeded {
-            logger.debug { "OllamaApiTask task1 completed: ${task1}" }
+        submitTaskFor(chatContext, selectModel1.selectionModel.selectedItem, ::updateChatContext1)
+        submitTaskFor(chatContext, selectModel2.selectionModel.selectedItem, ::updateChatContext2)
+        submitTaskFor(chatContext, selectModel3.selectionModel.selectedItem, ::updateChatContext3)
+    }
+
+    private fun submitTaskFor(chatContext: String, selectedModel: String, callback: (String) -> Unit) {
+        val task = OllamaCompletionApiTask(selectedModel, chatContext, callback)
+        task.setOnSucceeded {
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
         }
-        task1.setOnFailed {
-            val errorMessage = task1.exception.stackTraceToString()
-            chatViewModel.updateChatContext1(errorMessage)
+        task.setOnFailed {
+            val errorMessage = task.exception.stackTraceToString()
+            callback(errorMessage)
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
         }
 
         chatViewModel.disableNewRequests()
-        Executors.newSingleThreadExecutor().submit(task1)
-
-        val selectedOllamaModel2: String = selectModel2.selectionModel.selectedItem
-        val task2 = OllamaApiTask(selectedOllamaModel2, chatContext, ::updateChatContext2)
-        task2.setOnSucceeded {
-            logger.debug { "OllamaApiTask task2 completed: ${task2}" }
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-        }
-        task2.setOnFailed {
-            val errorMessage = task2.exception.stackTraceToString()
-            chatViewModel.updateChatContext2(errorMessage)
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-        }
-
-        chatViewModel.disableNewRequests()
-        Executors.newSingleThreadExecutor().submit(task2)
-
-        val selectedOllamaModel3: String = selectModel3.selectionModel.selectedItem
-        val task3 = OllamaApiTask(selectedOllamaModel3, chatContext, ::updateChatContext3)
-        task3.setOnSucceeded {
-            logger.debug { "OllamaApiTask task3 completed: ${task3}" }
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-        }
-        task3.setOnFailed {
-            val errorMessage = task3.exception.stackTraceToString()
-            chatViewModel.updateChatContext3(errorMessage)
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-        }
-
-        chatViewModel.disableNewRequests()
-        Executors.newSingleThreadExecutor().submit(task3)
+        Executors.newSingleThreadExecutor().submit(task)
     }
 
     private fun Node.assignShortcuts(keyCode: KeyCode, trigger: Runnable) {
@@ -120,55 +86,31 @@ class MirrOllamaController {
         txtPrompt.text = "Who are you?"
     }
 
+    private fun loadAvailableModels() {
+        val task = OllamaModelsApiTask()
+        task.setOnSucceeded {
+            val (model1, model2, model3) = loadSelectedModels()
+            logger.debug { "Loaded selected models: $model1, $model2, $model3" }
+            selectModel1.items.addAll(task.value)
+            selectModel2.items.addAll(task.value)
+            selectModel3.items.addAll(task.value)
+            chatViewModel.enableNewRequests()
+            updateSelectedModels(model1, model2, model3)
+        }
+        Executors.newSingleThreadExecutor().submit(task)
+    }
+
     private fun updateSelectedModels(model1: String?, model2: String?, model3: String?) {
         selectModel1.selectionModel.select(model1 ?: selectModel1.items[0])
         selectModel2.selectionModel.select(model2 ?: selectModel2.items[0])
         selectModel3.selectionModel.select(model3 ?: selectModel3.items[0])
     }
 
-    private fun loadAvailableModels() {
-        val task = OllamaModelsApiTask()
-        task.setOnSucceeded {
-            val (model1, model2, model3) = loadSelectedModels()
-            logger.debug { "OllamaModelsApiTask task completed: ${task.value}" }
-            selectModel1.items.addAll(task.value)
-            selectModel2.items.addAll(task.value)
-            selectModel3.items.addAll(task.value)
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-            println("Models from configuration: $model1, $model2, $model3")
-            updateSelectedModels(model1, model2, model3)
-        }
-        task.setOnFailed {
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-        }
-
-        chatViewModel.disableNewRequests()
-        Executors.newSingleThreadExecutor().submit(task)
-    }
-
-    fun model1Changed(actionEvent: ActionEvent) {
-        val model1 = selectModel1.selectionModel.selectedItem
-        val model2 = selectModel2.selectionModel.selectedItem
-        val model3 = selectModel3.selectionModel.selectedItem
-        logger.debug { "model1Changed: $model1" }
-        saveSelectedModels(model1, model2, model3)
-    }
-
-    fun model2Changed(actionEvent: ActionEvent) {
-        val model1 = selectModel1.selectionModel.selectedItem
-        val model2 = selectModel2.selectionModel.selectedItem
-        val model3 = selectModel3.selectionModel.selectedItem
-        logger.debug { "model2Changed: $model1" }
-        saveSelectedModels(model1, model2, model3)
-    }
-
-    fun model3Changed(actionEvent: ActionEvent) {
-        val model1 = selectModel1.selectionModel.selectedItem
-        val model2 = selectModel2.selectionModel.selectedItem
-        val model3 = selectModel3.selectionModel.selectedItem
-        logger.debug { "model3Changed: $model1" }
-        saveSelectedModels(model1, model2, model3)
+    fun modelChanged(actionEvent: ActionEvent) {
+        saveSelectedModels(
+            selectModel1.selectionModel.selectedItem,
+            selectModel2.selectionModel.selectedItem,
+            selectModel3.selectionModel.selectedItem
+        )
     }
 }

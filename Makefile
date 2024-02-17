@@ -1,4 +1,4 @@
-.PHONY: help pyenv run format clean check-format lint docs build examples
+.PHONY: help
 
 # Help system from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .DEFAULT_GOAL := help

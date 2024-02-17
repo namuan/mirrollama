@@ -6,4 +6,3 @@ import mu.KotlinLogging
 val logger = KotlinLogging.logger {}
 
 val gson: Gson = Gson()
-
