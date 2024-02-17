@@ -4,6 +4,7 @@ import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.ComboBox
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TextArea
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
@@ -12,16 +13,20 @@ import java.util.concurrent.Executors
 
 class MirrOllamaController {
 
+
     private val chatViewModel = ChatViewModel()
 
     lateinit var txtModel1: TextArea
     lateinit var selectModel1: ComboBox<String>
+    lateinit var progressModel1: ProgressIndicator
 
     lateinit var txtModel2: TextArea
     lateinit var selectModel2: ComboBox<String>
+    lateinit var progressModel2: ProgressIndicator
 
     lateinit var txtModel3: TextArea
     lateinit var selectModel3: ComboBox<String>
+    lateinit var progressModel3: ProgressIndicator
 
     lateinit var txtPrompt: TextArea
     lateinit var btnSend: Button
@@ -39,15 +44,18 @@ class MirrOllamaController {
         txtModel3.textProperty().bindBidirectional(chatViewModel.chatHistory3)
     }
 
-    fun updateChatContext1(chatContext: String) {
+    private fun updateChatContext1(chatContext: String) {
+        progressModel1.isVisible = false
         chatViewModel.updateChatContext1(chatContext)
     }
 
-    fun updateChatContext2(chatContext: String) {
+    private fun updateChatContext2(chatContext: String) {
+        progressModel2.isVisible = false
         chatViewModel.updateChatContext2(chatContext)
     }
 
-    fun updateChatContext3(chatContext: String) {
+    private fun updateChatContext3(chatContext: String) {
+        progressModel3.isVisible = false
         chatViewModel.updateChatContext3(chatContext)
     }
 
@@ -55,6 +63,9 @@ class MirrOllamaController {
         chatViewModel.clearChatHistory()
 
         val chatContext: String = chatViewModel.safePrompt()
+        progressModel1.isVisible = true
+        progressModel2.isVisible = true
+        progressModel3.isVisible = true
         submitTaskFor(chatContext, selectModel1.selectionModel.selectedItem, ::updateChatContext1)
         submitTaskFor(chatContext, selectModel2.selectionModel.selectedItem, ::updateChatContext2)
         submitTaskFor(chatContext, selectModel3.selectionModel.selectedItem, ::updateChatContext3)

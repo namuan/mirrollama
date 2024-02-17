@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" prefHeight="539.0" prefWidth="625.0" spacing="5.0"
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" prefHeight="650.0" prefWidth="736.0" spacing="5.0"
       xmlns="http://javafx.com/javafx/19" fx:controller="com.github.namuan.mirrollama.MirrOllamaController">
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -12,26 +12,41 @@
         <children>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                 <children>
-                    <ComboBox fx:id="selectModel1" onAction="#modelChanged" prefWidth="150.0"
+                    <ComboBox fx:id="selectModel1" onAction="#modelChanged" prefWidth="200.0"
                               promptText="Select model 1"/>
-                    <TextArea fx:id="txtModel1" editable="false" prefHeight="375.0" prefWidth="615.0" text="Model 1"
-                              wrapText="true" VBox.vgrow="ALWAYS"/>
+                    <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <TextArea fx:id="txtModel1" editable="false" prefHeight="375.0" prefWidth="615.0"
+                                      text="Model 1" wrapText="true"/>
+                            <ProgressIndicator fx:id="progressModel1" visible="false"/>
+                        </children>
+                    </StackPane>
                 </children>
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                 <children>
                     <ComboBox fx:id="selectModel2" onAction="#modelChanged" prefWidth="150.0"
                               promptText="Select model 2"/>
-                    <TextArea fx:id="txtModel2" editable="false" prefHeight="200.0" prefWidth="200.0" text="Model 2"
-                              wrapText="true" VBox.vgrow="ALWAYS"/>
+                    <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <TextArea fx:id="txtModel2" editable="false" prefHeight="200.0" prefWidth="200.0"
+                                      text="Model 2" wrapText="true"/>
+                            <ProgressIndicator fx:id="progressModel2" visible="false"/>
+                        </children>
+                    </StackPane>
                 </children>
             </VBox>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                 <children>
                     <ComboBox fx:id="selectModel3" onAction="#modelChanged" prefWidth="150.0"
                               promptText="Select model 3"/>
-                    <TextArea fx:id="txtModel3" editable="false" prefHeight="375.0" prefWidth="615.0" text="Model 3"
-                              wrapText="true" VBox.vgrow="ALWAYS"/>
+                    <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <TextArea fx:id="txtModel3" editable="false" prefHeight="375.0" prefWidth="615.0"
+                                      text="Model 3" wrapText="true"/>
+                            <ProgressIndicator fx:id="progressModel3" visible="false"/>
+                        </children>
+                    </StackPane>
                 </children>
             </VBox>
         </children>
