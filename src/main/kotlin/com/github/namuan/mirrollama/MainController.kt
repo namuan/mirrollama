@@ -11,7 +11,7 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import java.util.concurrent.Executors
 
-class MirrOllamaController {
+class MainController {
 
 
     private val chatViewModel = ChatViewModel()
@@ -42,20 +42,20 @@ class MirrOllamaController {
         txtModel1.textProperty().bindBidirectional(chatViewModel.chatHistory1)
         txtModel2.textProperty().bindBidirectional(chatViewModel.chatHistory2)
         txtModel3.textProperty().bindBidirectional(chatViewModel.chatHistory3)
+        progressModel1.visibleProperty().bindBidirectional(chatViewModel.showModel1Progress)
+        progressModel2.visibleProperty().bindBidirectional(chatViewModel.showModel2Progress)
+        progressModel3.visibleProperty().bindBidirectional(chatViewModel.showModel3Progress)
     }
 
     private fun updateChatContext1(chatContext: String) {
-        progressModel1.isVisible = false
         chatViewModel.updateChatContext1(chatContext)
     }
 
     private fun updateChatContext2(chatContext: String) {
-        progressModel2.isVisible = false
         chatViewModel.updateChatContext2(chatContext)
     }
 
     private fun updateChatContext3(chatContext: String) {
-        progressModel3.isVisible = false
         chatViewModel.updateChatContext3(chatContext)
     }
 
@@ -63,9 +63,6 @@ class MirrOllamaController {
         chatViewModel.clearChatHistory()
 
         val chatContext: String = chatViewModel.safePrompt()
-        progressModel1.isVisible = true
-        progressModel2.isVisible = true
-        progressModel3.isVisible = true
         submitTaskFor(chatContext, selectModel1.selectionModel.selectedItem, ::updateChatContext1)
         submitTaskFor(chatContext, selectModel2.selectionModel.selectedItem, ::updateChatContext2)
         submitTaskFor(chatContext, selectModel3.selectionModel.selectedItem, ::updateChatContext3)

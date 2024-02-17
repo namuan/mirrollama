@@ -23,7 +23,7 @@ class MainView(private val title: String) {
             savePosition(stage)
         }
 
-        val mainController = fxmlLoader.getController<MirrOllamaController>()
+        val mainController = fxmlLoader.getController<MainController>()
         mainController.bindShortcuts()
         mainController.bindViewModel()
         mainController.init()
