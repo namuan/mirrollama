@@ -44,29 +44,25 @@ class MirrOllamaController {
     }
 
     fun updateChatContext1(chatContext: String) {
-        logger.debug { "updateChatContext1: $chatContext" }
         chatViewModel.updateChatContext1(chatContext)
     }
 
     fun updateChatContext2(chatContext: String) {
-        logger.debug { "updateChatContext2: $chatContext" }
         chatViewModel.updateChatContext2(chatContext)
     }
 
     fun updateChatContext3(chatContext: String) {
-        logger.debug { "updateChatContext3: $chatContext" }
         chatViewModel.updateChatContext3(chatContext)
     }
 
     fun onSendPrompt(actionEvent: ActionEvent) {
         chatViewModel.clearChatHistory()
 
-        val chatContext: String = chatViewModel.getChatContext()
+        val chatContext: String = chatViewModel.safePrompt()
         val selectedOllamaModel1: String = selectModel1.selectionModel.selectedItem
         val task1 = OllamaApiTask(selectedOllamaModel1, chatContext, ::updateChatContext1)
         task1.setOnSucceeded {
             logger.debug { "OllamaApiTask task1 completed: ${task1}" }
-//            chatViewModel.updateChatContext(task1.value.response)
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
         }

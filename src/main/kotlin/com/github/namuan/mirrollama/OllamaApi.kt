@@ -1,5 +1,6 @@
 package com.github.namuan.mirrollama
 
+import com.google.gson.annotations.SerializedName
 import javafx.concurrent.Task
 import java.net.URI
 import java.net.http.HttpClient
@@ -9,25 +10,12 @@ import java.net.http.HttpResponse
 
 private const val OLLAMA_BASE = "http://localhost:11434"
 
-data class OllamaResponse(
-    val model: String,
-    val created_at: String,
-    val response: String,
-    val done: Boolean,
-    val context: List<Int>,
-    val total_duration: Long,
-    val load_duration: Long,
-    val prompt_eval_count: Int,
-    val prompt_eval_duration: Long,
-    val eval_count: Int,
-    val eval_duration: Long
-)
-
 data class StreamingOllamaResponse(
     val model: String,
-    val created_at: String,
+    @SerializedName("created_at")
+    val createdAt: String,
     val response: String,
-    val done: Boolean
+    val done: Boolean,
 )
 
 data class OllamaRequest(
@@ -45,21 +33,25 @@ data class OllamaRequest(
 )
 
 data class ModelDetails(
-    val parent_model: String,
+    @SerializedName("parent_model")
+    val parentModel: String,
     val format: String,
     val family: String,
     val families: List<String>?,
-    val parameter_size: String,
-    val quantization_level: String
+    @SerializedName("parameter_size")
+    val parameterSize: String,
+    @SerializedName("quantization_level")
+    val quantizationLevel: String,
 )
 
 data class ModelInfo(
     val name: String,
     val model: String,
-    val modified_at: String,
+    @SerializedName("modified_at")
+    val modifiedAt: String,
     val size: Long,
     val digest: String,
-    val details: ModelDetails
+    val details: ModelDetails,
 )
 
 data class ModelsResponse(
@@ -96,19 +88,22 @@ fun generate(
         keepAlive = keepAlive
     )
     val requestBody = gson.toJson(ollamaRequest)
-    logger.info { "JSON Request: $requestBody" }
+    logger.debug { "JSON Request: $requestBody" }
+
     val request = HttpRequest.newBuilder()
         .header("Content-Type", "application/json")
         .uri(URI.create("$OLLAMA_BASE/api/generate"))
         .POST(HttpRequest.BodyPublishers.ofString(requestBody))
         .build()
 
-    val response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString())
+    logger.debug { "[${ollamaRequest.model}] ▶\uFE0F Sending request to Ollama" }
+    val response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofLines())
     val responseBody = response.body()
-    logger.debug { "JSON Response: $responseBody" }
-    val completionResponse = gson.fromJson(responseBody, OllamaResponse::class.java)
-
-    callback(completionResponse.response)
+    logger.debug { "[${ollamaRequest.model}] ◀\uFE0F Getting response from Ollama" }
+    responseBody.map { it.trim() }.forEach {
+        val completionResponse = gson.fromJson(it, StreamingOllamaResponse::class.java)
+        callback(completionResponse.response)
+    }
 }
 
 fun listModels(): List<String> {
@@ -125,17 +120,22 @@ fun listModels(): List<String> {
     return listModelsResponse.models.map { it.model }
 }
 
-class OllamaApiTask(val selectedModel: String, val chatContext: String, val callback: (String) -> Unit) : Task<Unit>() {
+class OllamaApiTask(
+    private val selectedModel: String,
+    private val chatContext: String,
+    private val callback: (String) -> Unit,
+) : Task<Unit>() {
     override fun call() {
         return generate(
             model = selectedModel,
             prompt = chatContext,
+            stream = true,
             callback = callback
         )
     }
 }
 
-class OllamaModelsApiTask() : Task<List<String>>() {
+class OllamaModelsApiTask : Task<List<String>>() {
     override fun call(): List<String> {
         return listModels()
     }
@@ -150,7 +150,8 @@ fun main() {
     generate(
         model = "mistral:latest",
         prompt = "Hello, how are you?",
-        callback = ::updateChatContext
+        stream = true,
+        callback = ::updateChatContext,
     )
 
     val availableModels = listModels()
