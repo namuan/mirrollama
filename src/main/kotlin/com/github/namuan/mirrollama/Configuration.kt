@@ -7,42 +7,76 @@ import java.io.File
 val applicationDirectory: String = System.getProperty("user.home") + "/mirrollama"
 
 private val propertiesFile = "$applicationDirectory/app_properties.json"
-private val apiKeyFile = "$applicationDirectory/api_key.json"
 
 data class WindowPosition(val x: Double, val y: Double, val width: Double, val height: Double)
 
-data class ApplicationProperties(val windowPosition: WindowPosition)
+data class ApplicationProperties(
+    var windowPosition: WindowPosition? = null,
+    var selectedModel1: String? = null,
+    var selectedModel2: String? = null,
+    var selectedModel3: String? = null
+)
 
 fun setupConfig() {
     File(applicationDirectory).mkdirs()
 }
 
-fun loadApiKey(): String {
-    val apiKeyFile = File(apiKeyFile)
-    return if (apiKeyFile.exists()) {
-        apiKeyFile.readText().trim()
-    } else {
-        ""
-    }
-}
-
-fun saveApiKey(apiKey: String) {
-    File(apiKeyFile).writeText(apiKey)
-}
-
 fun savePosition(stage: Stage) {
-    val windowPosition = WindowPosition(stage.x, stage.y, stage.width, stage.height)
-    val applicationProperties = ApplicationProperties(windowPosition = windowPosition)
-    val toJson = Gson().toJson(applicationProperties)
-    File(propertiesFile).writeText(toJson)
+    if (File(propertiesFile).exists()) {
+        val applicationProperties = Gson().fromJson(File(propertiesFile).readText(), ApplicationProperties::class.java)
+        val windowPosition = WindowPosition(stage.x, stage.y, stage.width, stage.height)
+        applicationProperties.windowPosition = windowPosition
+        val toJson = Gson().toJson(applicationProperties)
+        File(propertiesFile).writeText(toJson)
+    } else {
+        val windowPosition = WindowPosition(stage.x, stage.y, stage.width, stage.height)
+        val applicationProperties = ApplicationProperties(windowPosition = windowPosition)
+        val toJson = Gson().toJson(applicationProperties)
+        File(propertiesFile).writeText(toJson)
+    }
 }
 
 fun loadPosition(stage: Stage) {
     if (File(propertiesFile).exists()) {
         val applicationProperties = Gson().fromJson(File(propertiesFile).readText(), ApplicationProperties::class.java)
-        stage.x = applicationProperties.windowPosition.x
-        stage.y = applicationProperties.windowPosition.y
-        stage.width = applicationProperties.windowPosition.width
-        stage.height = applicationProperties.windowPosition.height
+        if (applicationProperties.windowPosition != null) {
+            stage.x = applicationProperties.windowPosition!!.x
+            stage.y = applicationProperties.windowPosition!!.y
+            stage.width = applicationProperties.windowPosition!!.width
+            stage.height = applicationProperties.windowPosition!!.height
+        }
     }
+}
+
+fun saveSelectedModels(model1: String?, model2: String?, model3: String?) {
+    if (File(propertiesFile).exists()) {
+        val applicationProperties = Gson().fromJson(File(propertiesFile).readText(), ApplicationProperties::class.java)
+        applicationProperties.selectedModel1 = model1
+        applicationProperties.selectedModel2 = model2
+        applicationProperties.selectedModel3 = model3
+        val toJson = Gson().toJson(applicationProperties)
+        File(propertiesFile).writeText(toJson)
+        logger.debug { "Saved selected models: $model1, $model2, $model3" }
+    } else {
+        val applicationProperties = ApplicationProperties(
+            selectedModel1 = model1,
+            selectedModel2 = model2,
+            selectedModel3 = model3,
+        )
+        val toJson = Gson().toJson(applicationProperties)
+        File(propertiesFile).writeText(toJson)
+    }
+}
+
+fun loadSelectedModels(): Triple<String?, String?, String?> {
+    if (File(propertiesFile).exists()) {
+        val applicationProperties = Gson().fromJson(File(propertiesFile).readText(), ApplicationProperties::class.java)
+        val model1 = applicationProperties.selectedModel1
+        val model2 = applicationProperties.selectedModel2
+        val model3 = applicationProperties.selectedModel3
+        logger.debug { "Loaded selected models: $model1, $model2, $model3" }
+        return Triple(model1, model2, model3)
+    }
+    logger.debug { "No selected models found" }
+    return Triple(null, null, null)
 }

@@ -13,7 +13,9 @@ private const val ROBOT = "🤖"
 
 class ChatViewModel {
     val prompt: StringProperty = SimpleStringProperty()
-    val chatHistory: StringProperty = SimpleStringProperty()
+    val chatHistory1: StringProperty = SimpleStringProperty()
+    val chatHistory2: StringProperty = SimpleStringProperty()
+    val chatHistory3: StringProperty = SimpleStringProperty()
     val disablePrompting: BooleanProperty = SimpleBooleanProperty()
 
     private val file: File = File(applicationDirectory, "chat.txt")
@@ -33,20 +35,32 @@ class ChatViewModel {
     }
 
     fun getChatContext(): String {
-        return safeChatHistory() + safePrompt()
+        return safePrompt()
     }
 
-    fun updateChatContext(promptResponse: String) {
+    fun updateChatContext1(promptResponse: String) {
         val output = buildOutputFrom(safePrompt(), promptResponse)
-        chatHistory.set(safeChatHistory() + output)
+        chatHistory1.set(output)
+        file.appendText(output)
+    }
+
+    fun updateChatContext2(promptResponse: String) {
+        val output = buildOutputFrom(safePrompt(), promptResponse)
+        chatHistory2.set(output)
+        file.appendText(output)
+    }
+
+    fun updateChatContext3(promptResponse: String) {
+        val output = buildOutputFrom(safePrompt(), promptResponse)
+        chatHistory3.set(output)
         file.appendText(output)
     }
 
     fun clearChatHistory() {
-        chatHistory.set("")
+        chatHistory1.set("")
+        chatHistory2.set("")
+        chatHistory3.set("")
     }
-
-    private fun safeChatHistory() = chatHistory.get().orEmpty()
 
     private fun safePrompt() = prompt.get().orEmpty()
 

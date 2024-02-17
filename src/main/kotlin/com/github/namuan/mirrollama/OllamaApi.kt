@@ -44,6 +44,28 @@ data class OllamaRequest(
     val keepAlive: Any? = null
 )
 
+data class ModelDetails(
+    val parent_model: String,
+    val format: String,
+    val family: String,
+    val families: List<String>?,
+    val parameter_size: String,
+    val quantization_level: String
+)
+
+data class ModelInfo(
+    val name: String,
+    val model: String,
+    val modified_at: String,
+    val size: Long,
+    val digest: String,
+    val details: ModelDetails
+)
+
+data class ModelsResponse(
+    val models: List<ModelInfo>
+)
+
 fun generate(
     model: String,
     prompt: String,
@@ -77,7 +99,6 @@ fun generate(
     logger.info { "JSON Request: $requestBody" }
     val request = HttpRequest.newBuilder()
         .header("Content-Type", "application/json")
-        .header("Authorization", "Bearer ${loadApiKey()}")
         .uri(URI.create("$OLLAMA_BASE/api/generate"))
         .POST(HttpRequest.BodyPublishers.ofString(requestBody))
         .build()
@@ -90,13 +111,33 @@ fun generate(
     callback(completionResponse.response)
 }
 
-class OllamaApiTask(val chatContext: String, val callback: (String) -> Unit) : Task<Unit>() {
+fun listModels(): List<String> {
+    val request = HttpRequest.newBuilder()
+        .header("Accept", "application/json")
+        .uri(URI.create("$OLLAMA_BASE/api/tags"))
+        .GET()
+        .build()
+    val response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString())
+    val responseBody = response.body()
+    logger.debug { "JSON Response: $responseBody" }
+    println(responseBody)
+    val listModelsResponse = gson.fromJson(responseBody, ModelsResponse::class.java)
+    return listModelsResponse.models.map { it.model }
+}
+
+class OllamaApiTask(val selectedModel: String, val chatContext: String, val callback: (String) -> Unit) : Task<Unit>() {
     override fun call() {
         return generate(
-            model = "mistral:latest",
+            model = selectedModel,
             prompt = chatContext,
             callback = callback
         )
+    }
+}
+
+class OllamaModelsApiTask() : Task<List<String>>() {
+    override fun call(): List<String> {
+        return listModels()
     }
 }
 
@@ -111,4 +152,7 @@ fun main() {
         prompt = "Hello, how are you?",
         callback = ::updateChatContext
     )
+
+    val availableModels = listModels()
+    println(availableModels)
 }
