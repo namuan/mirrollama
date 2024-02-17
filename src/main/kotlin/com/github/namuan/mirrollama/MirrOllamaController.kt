@@ -80,7 +80,6 @@ class MirrOllamaController {
         val task2 = OllamaApiTask(selectedOllamaModel2, chatContext, ::updateChatContext2)
         task2.setOnSucceeded {
             logger.debug { "OllamaApiTask task2 completed: ${task2}" }
-//            chatViewModel.updateChatContext(task2.value.response)
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
         }
@@ -98,7 +97,6 @@ class MirrOllamaController {
         val task3 = OllamaApiTask(selectedOllamaModel3, chatContext, ::updateChatContext3)
         task3.setOnSucceeded {
             logger.debug { "OllamaApiTask task3 completed: ${task3}" }
-//            chatViewModel.updateChatContext(task3.value.response)
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
         }
