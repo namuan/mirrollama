@@ -9,9 +9,9 @@
 # PROJECT_VERSION: version used in pom.xml, e.g. 1.0-SNAPSHOT
 # APP_VERSION: the application version, e.g. 1.0.0, shown in "about" dialog
 
-MAIN_JAR="gpt-fx-$PROJECT_VERSION.jar"
-APPLICATION_NAME=GptFx
-PACKAGE_IDENTIFIER=com.github.namuan.gptfx
+MAIN_JAR="mirrollama-$PROJECT_VERSION.jar"
+APPLICATION_NAME=MirrOllama
+PACKAGE_IDENTIFIER=com.github.namuan.mirrollama
 MAIN_CLASS=${PACKAGE_IDENTIFIER}.MainAppKt
 VENDOR="DeskRiders"
 COPYRIGHT_MESSAGE="Copyright © 2022-23 DeskRiders"
