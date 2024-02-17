@@ -12,8 +12,7 @@ import javafx.scene.input.KeyCombination
 import java.util.concurrent.Executors
 
 class MainController {
-
-
+    private val executorService = Executors.newSingleThreadExecutor()
     private val chatViewModel = ChatViewModel()
 
     lateinit var txtModel1: TextArea
@@ -39,9 +38,9 @@ class MainController {
     fun bindViewModel() {
         txtPrompt.textProperty().bindBidirectional(chatViewModel.prompt)
         btnSend.disableProperty().bindBidirectional(chatViewModel.disablePrompting)
-        txtModel1.textProperty().bindBidirectional(chatViewModel.chatHistory1)
-        txtModel2.textProperty().bindBidirectional(chatViewModel.chatHistory2)
-        txtModel3.textProperty().bindBidirectional(chatViewModel.chatHistory3)
+        txtModel1.textProperty().bindBidirectional(chatViewModel.outputModel1)
+        txtModel2.textProperty().bindBidirectional(chatViewModel.outputModel2)
+        txtModel3.textProperty().bindBidirectional(chatViewModel.outputModel3)
         progressModel1.visibleProperty().bindBidirectional(chatViewModel.showModel1Progress)
         progressModel2.visibleProperty().bindBidirectional(chatViewModel.showModel2Progress)
         progressModel3.visibleProperty().bindBidirectional(chatViewModel.showModel3Progress)
@@ -60,7 +59,7 @@ class MainController {
     }
 
     fun onSendPrompt(actionEvent: ActionEvent) {
-        chatViewModel.clearChatHistory()
+        chatViewModel.clearAllOutputs()
 
         val chatContext: String = chatViewModel.safePrompt()
         submitTaskFor(chatContext, selectModel1.selectionModel.selectedItem, ::updateChatContext1)
@@ -82,7 +81,7 @@ class MainController {
         }
 
         chatViewModel.disableNewRequests()
-        Executors.newSingleThreadExecutor().submit(task)
+        executorService.submit(task)
     }
 
     private fun Node.assignShortcuts(keyCode: KeyCode, trigger: Runnable) {
@@ -105,7 +104,7 @@ class MainController {
             chatViewModel.enableNewRequests()
             updateSelectedModels(model1, model2, model3)
         }
-        Executors.newSingleThreadExecutor().submit(task)
+        executorService.submit(task)
     }
 
     private fun updateSelectedModels(model1: String?, model2: String?, model3: String?) {
@@ -120,5 +119,9 @@ class MainController {
             selectModel2.selectionModel.selectedItem,
             selectModel3.selectionModel.selectedItem
         )
+    }
+
+    fun close() {
+        executorService.shutdownNow()
     }
 }

@@ -19,13 +19,14 @@ class MainView(private val title: String) {
 
         loadPosition(stage)
 
-        stage.setOnCloseRequest { _ ->
-            savePosition(stage)
-        }
-
         val mainController = fxmlLoader.getController<MainController>()
         mainController.bindShortcuts()
         mainController.bindViewModel()
         mainController.init()
+
+        stage.setOnCloseRequest { _ ->
+            mainController.close()
+            savePosition(stage)
+        }
     }
 }
