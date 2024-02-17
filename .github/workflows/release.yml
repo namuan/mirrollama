@@ -33,8 +33,8 @@ jobs:
       - name: Upload Linux
         uses: actions/upload-artifact@v2
         with:
-          name: GptFx-linux
-          path: target/gpt-fx.tar.gz
+          name: MirrOllama-linux
+          path: target/mirrollama-fx.tar.gz
 
   build-windows-package:
     runs-on: windows-latest
@@ -61,8 +61,8 @@ jobs:
       - name: Upload Windows
         uses: actions/upload-artifact@v2
         with:
-          name: GptFx-windows
-          path: target/gpt-fx.tar.gz
+          name: MirrOllama-windows
+          path: target/mirrollama-fx.tar.gz
 
   build-macos-package:
     runs-on: macos-latest
@@ -89,8 +89,8 @@ jobs:
       - name: Upload MacOS
         uses: actions/upload-artifact@v2
         with:
-          name: GptFx-macos
-          path: target/gpt-fx.tar.gz
+          name: MirrOllama-macos
+          path: target/mirrollama-fx.tar.gz
 
   build-release:
     runs-on: ubuntu-latest
@@ -113,7 +113,7 @@ jobs:
       - name: Download linux artifact
         uses: actions/download-artifact@v2
         with:
-          name: GptFx-linux
+          name: MirrOllama-linux
 
       - name: Upload Release Asset for Linux
         uses: actions/upload-release-asset@v1
@@ -121,14 +121,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./gpt-fx.tar.gz
-          asset_name: gpt-fx-linux.tar.gz
+          asset_path: ./mirrollama-fx.tar.gz
+          asset_name: mirrollama-fx-linux.tar.gz
           asset_content_type: application/gzip
 
       - name: Download windows artifact
         uses: actions/download-artifact@v2
         with:
-          name: GptFx-windows
+          name: MirrOllama-windows
 
       - name: Display structure of downloaded files
         run: ls -R
@@ -139,14 +139,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./gpt-fx.tar.gz
-          asset_name: gpt-fx-windows.tar.gz
+          asset_path: ./mirrollama-fx.tar.gz
+          asset_name: mirrollama-fx-windows.tar.gz
           asset_content_type: application/gzip
 
       - name: Download macos artifact
         uses: actions/download-artifact@v2
         with:
-          name: GptFx-macos
+          name: MirrOllama-macos
 
       - name: Upload Release Asset for Macos
         uses: actions/upload-release-asset@v1
@@ -154,6 +154,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./gpt-fx.tar.gz
-          asset_name: gpt-fx-macos.tar.gz
+          asset_path: ./mirrollama-fx.tar.gz
+          asset_name: mirrollama-fx-macos.tar.gz
           asset_content_type: application/gzip
