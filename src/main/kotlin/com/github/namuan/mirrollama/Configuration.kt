@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import javafx.stage.Stage
 import java.io.File
 
-val applicationDirectory: String = System.getProperty("user.home") + "/mirrollama"
+val applicationDirectory: String = System.getProperty("user.home") + "/.mirrollama"
 
 private val propertiesFile = "$applicationDirectory/app_properties.json"
 
@@ -22,18 +22,18 @@ fun setupConfig() {
 }
 
 fun savePosition(stage: Stage) {
-    if (File(propertiesFile).exists()) {
+    val applicationProperties = if (File(propertiesFile).exists()) {
         val applicationProperties = Gson().fromJson(File(propertiesFile).readText(), ApplicationProperties::class.java)
         val windowPosition = WindowPosition(stage.x, stage.y, stage.width, stage.height)
         applicationProperties.windowPosition = windowPosition
-        val toJson = Gson().toJson(applicationProperties)
-        File(propertiesFile).writeText(toJson)
+        applicationProperties
     } else {
         val windowPosition = WindowPosition(stage.x, stage.y, stage.width, stage.height)
-        val applicationProperties = ApplicationProperties(windowPosition = windowPosition)
-        val toJson = Gson().toJson(applicationProperties)
-        File(propertiesFile).writeText(toJson)
+        ApplicationProperties(windowPosition = windowPosition)
     }
+
+    val toJson = Gson().toJson(applicationProperties)
+    File(propertiesFile).writeText(toJson)
 }
 
 fun loadPosition(stage: Stage) {
@@ -49,23 +49,23 @@ fun loadPosition(stage: Stage) {
 }
 
 fun saveSelectedModels(model1: String?, model2: String?, model3: String?) {
-    if (File(propertiesFile).exists()) {
+    val applicationProperties = if (File(propertiesFile).exists()) {
         val applicationProperties = Gson().fromJson(File(propertiesFile).readText(), ApplicationProperties::class.java)
         applicationProperties.selectedModel1 = model1
         applicationProperties.selectedModel2 = model2
         applicationProperties.selectedModel3 = model3
-        val toJson = Gson().toJson(applicationProperties)
-        File(propertiesFile).writeText(toJson)
-        logger.debug { "Saved selected models: $model1, $model2, $model3" }
+        applicationProperties
     } else {
-        val applicationProperties = ApplicationProperties(
+        ApplicationProperties(
             selectedModel1 = model1,
             selectedModel2 = model2,
             selectedModel3 = model3,
         )
-        val toJson = Gson().toJson(applicationProperties)
-        File(propertiesFile).writeText(toJson)
     }
+
+    val toJson = Gson().toJson(applicationProperties)
+    File(propertiesFile).writeText(toJson)
+    logger.debug { "Saved selected models: $model1, $model2, $model3" }
 }
 
 fun loadSelectedModels(): Triple<String?, String?, String?> {
