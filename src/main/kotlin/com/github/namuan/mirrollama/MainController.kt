@@ -150,4 +150,28 @@ class MainController {
     fun close() {
         executorService.shutdownNow()
     }
+
+    fun resendModel1(actionEvent: ActionEvent) {
+
+    }
+
+    fun likeModel1(actionEvent: ActionEvent) {
+
+    }
+
+    fun resendModel2(actionEvent: ActionEvent) {
+
+    }
+
+    fun likeModel2(actionEvent: ActionEvent) {
+
+    }
+
+    fun resendModel3(actionEvent: ActionEvent) {
+
+    }
+
+    fun likeModel3(actionEvent: ActionEvent) {
+
+    }
 }
