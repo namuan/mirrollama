@@ -26,6 +26,7 @@
         <gson.version>2.10</gson.version>
         <kotlin-logging-jvm.version>3.0.4</kotlin-logging-jvm.version>
         <logback-classic.version>1.4.14</logback-classic.version>
+        <sqlite-jdbc.version>3.45.1.0</sqlite-jdbc.version>
         <fatJar.dir>${project.build.directory}/fatJar/</fatJar.dir>
         <main.class>com.github.namuan.mirrollama.MainAppKt</main.class>
         <destination.dir>${project.build.directory}/${project.name}</destination.dir>
@@ -79,7 +80,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.45.1.0</version>
+            <version>${sqlite-jdbc.version}</version>
         </dependency>
     </dependencies>
 
