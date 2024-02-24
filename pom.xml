@@ -76,6 +76,11 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback-classic.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>

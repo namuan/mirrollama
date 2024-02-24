@@ -14,11 +14,13 @@ data class ApplicationProperties(
     var windowPosition: WindowPosition? = null,
     var selectedModel1: String? = null,
     var selectedModel2: String? = null,
-    var selectedModel3: String? = null
+    var selectedModel3: String? = null,
 )
 
 fun setupConfig() {
     File(applicationDirectory).mkdirs()
+    val databaseFile = "$applicationDirectory/mirrollama.db"
+    setupDatabase(databaseFile)
 }
 
 fun savePosition(stage: Stage) {
