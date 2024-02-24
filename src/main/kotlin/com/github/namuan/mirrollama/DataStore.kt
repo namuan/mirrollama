@@ -4,8 +4,11 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
+import java.util.*
 
 data class User(val id: Int, val name: String, val age: Int)
+
+data class ModelResponse(val id: Int, val modelName: String, val text: String, val createdAt: String)
 
 class DatabaseManager(databasePath: String) {
     private var connection: Connection? = null
@@ -26,21 +29,38 @@ class DatabaseManager(databasePath: String) {
         }
     }
 
-    // CRUD operations will be implemented here
     fun createTable() {
-        val sql = """
-           CREATE TABLE IF NOT EXISTS users (
+        executeUpdate(
+            """
+            CREATE TABLE IF NOT EXISTS users (
                id INTEGER PRIMARY KEY,
                name TEXT NOT NULL,
                age INTEGER NOT NULL
            )
-       """
-        executeUpdate(sql)
+        """.trimIndent()
+        )
+
+        executeUpdate(
+            """
+            CREATE TABLE IF NOT EXISTS model_responses (
+                id INTEGER PRIMARY KEY,
+                model_name TEXT NOT NULL,
+                prompt TEXT NOT NULL,
+                response TEXT NOT NULL,
+                createdAt TEXT NOT NULL
+           )
+        """.trimIndent()
+        )
     }
 
     fun insertUser(name: String, age: Int) {
         val sql = "INSERT INTO users(name, age) VALUES(?, ?)"
         executeUpdate(sql, name, age)
+    }
+
+    fun insertModelResponse(modelName: String, prompt: String, response: String) {
+        val sql = "INSERT INTO model_responses(model_name, prompt, response, createdAt) VALUES(?, ?, ?, ?)"
+        executeUpdate(sql, modelName, prompt, response, Date().toString())
     }
 
     fun getUsers(): List<User> {

@@ -1,5 +1,6 @@
 package com.github.namuan.mirrollama
 
+import javafx.beans.property.StringProperty
 import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -62,16 +63,41 @@ class MainController {
         chatViewModel.clearAllOutputs()
 
         val chatContext: String = chatViewModel.safePrompt()
-        submitTaskFor(chatContext, selectModel1.selectionModel.selectedItem, ::updateChatContext1)
-        submitTaskFor(chatContext, selectModel2.selectionModel.selectedItem, ::updateChatContext2)
-        submitTaskFor(chatContext, selectModel3.selectionModel.selectedItem, ::updateChatContext3)
+        submitTaskFor(
+            chatContext,
+            selectModel1.selectionModel.selectedItem,
+            chatViewModel.outputModel1,
+            ::updateChatContext1
+        )
+        submitTaskFor(
+            chatContext,
+            selectModel2.selectionModel.selectedItem,
+            chatViewModel.outputModel2,
+            ::updateChatContext2
+        )
+        submitTaskFor(
+            chatContext,
+            selectModel3.selectionModel.selectedItem,
+            chatViewModel.outputModel3,
+            ::updateChatContext3
+        )
     }
 
-    private fun submitTaskFor(chatContext: String, selectedModel: String, callback: (String) -> Unit) {
+    private fun submitTaskFor(
+        chatContext: String,
+        selectedModel: String,
+        outputProperty: StringProperty,
+        callback: (String) -> Unit,
+    ) {
         val task = OllamaCompletionApiTask(selectedModel, chatContext, callback)
         task.setOnSucceeded {
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
+            databaseManager.insertModelResponse(
+                selectedModel,
+                chatContext,
+                outputProperty.value
+            )
         }
         task.setOnFailed {
             val errorMessage = task.exception.stackTraceToString()
