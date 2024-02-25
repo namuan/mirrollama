@@ -40,20 +40,20 @@
                                                           text="Model 1" wrapText="true"/>
                                                 <ProgressIndicator fx:id="progressModel1"/>
                                                 <Button fx:id="btnResendModel1" mnemonicParsing="false"
-                                                        onAction="#resendModel1" text="Resend" textAlignment="CENTER"
+                                                        onAction="#resendModel1" text="" textAlignment="CENTER"
                                                         StackPane.alignment="BOTTOM_RIGHT">
                                                     <StackPane.margin>
-                                                        <Insets bottom="10.0" right="60.0"/>
+                                                        <Insets bottom="10.0" right="45.0"/>
                                                     </StackPane.margin>
                                                     <font>
-                                                        <Font name="Apple Color Emoji" size="13.0"/>
+                                                        <Font name="Wingdings 3" size="13.0"/>
                                                     </font>
                                                 </Button>
                                                 <Button fx:id="btnLikeModel1" mnemonicParsing="false"
-                                                        onAction="#likeModel1" text="Like" textAlignment="CENTER"
+                                                        onAction="#likeModel1" text="" textAlignment="CENTER"
                                                         StackPane.alignment="BOTTOM_RIGHT">
                                                     <font>
-                                                        <Font name="Apple Color Emoji" size="13.0"/>
+                                                        <Font name="Wingdings 2" size="13.0"/>
                                                     </font>
                                                     <StackPane.margin>
                                                         <Insets bottom="10.0" right="10.0"/>
@@ -81,18 +81,18 @@
                                                   wrapText="true"/>
                                         <ProgressIndicator fx:id="progressModel2"/>
                                         <Button fx:id="btnResendModel2" mnemonicParsing="false" onAction="#resendModel2"
-                                                text="Resend" textAlignment="CENTER" StackPane.alignment="BOTTOM_RIGHT">
-                                            <font>
-                                                <Font name="Apple Color Emoji" size="13.0"/>
-                                            </font>
+                                                text="" textAlignment="CENTER" StackPane.alignment="BOTTOM_RIGHT">
                                             <StackPane.margin>
-                                                <Insets bottom="10.0" right="60.0"/>
+                                                <Insets bottom="10.0" right="45.0"/>
                                             </StackPane.margin>
+                                            <font>
+                                                <Font name="Wingdings 3" size="13.0"/>
+                                            </font>
                                         </Button>
                                         <Button fx:id="btnLikeModel2" mnemonicParsing="false" onAction="#likeModel2"
-                                                text="Like" textAlignment="CENTER" StackPane.alignment="BOTTOM_RIGHT">
+                                                text="" textAlignment="CENTER" StackPane.alignment="BOTTOM_RIGHT">
                                             <font>
-                                                <Font name="Apple Color Emoji" size="13.0"/>
+                                                <Font name="Wingdings 2" size="13.0"/>
                                             </font>
                                             <StackPane.margin>
                                                 <Insets bottom="10.0" right="10.0"/>
@@ -121,20 +121,20 @@
                                                           text="Model 3&#10;" wrapText="true"/>
                                                 <ProgressIndicator fx:id="progressModel3"/>
                                                 <Button fx:id="btnResendModel3" mnemonicParsing="false"
-                                                        onAction="#resendModel3" text="Resend" textAlignment="CENTER"
+                                                        onAction="#resendModel3" text="" textAlignment="CENTER"
                                                         StackPane.alignment="BOTTOM_RIGHT">
-                                                    <font>
-                                                        <Font name="Apple Color Emoji" size="13.0"/>
-                                                    </font>
                                                     <StackPane.margin>
-                                                        <Insets bottom="10.0" right="60.0"/>
+                                                        <Insets bottom="10.0" right="45.0"/>
                                                     </StackPane.margin>
+                                                    <font>
+                                                        <Font name="Wingdings 3" size="13.0"/>
+                                                    </font>
                                                 </Button>
                                                 <Button fx:id="btnLikeModel3" mnemonicParsing="false"
-                                                        onAction="#likeModel3" text="Like" textAlignment="CENTER"
+                                                        onAction="#likeModel3" text="" textAlignment="CENTER"
                                                         StackPane.alignment="BOTTOM_RIGHT">
                                                     <font>
-                                                        <Font name="Apple Color Emoji" size="13.0"/>
+                                                        <Font name="Wingdings 2" size="13.0"/>
                                                     </font>
                                                     <StackPane.margin>
                                                         <Insets bottom="10.0" right="10.0"/>
