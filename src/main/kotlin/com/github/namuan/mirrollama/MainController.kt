@@ -152,7 +152,14 @@ class MainController {
     }
 
     fun resendModel1(actionEvent: ActionEvent) {
-
+        chatViewModel.clearModel1Output()
+        val chatContext: String = chatViewModel.safePrompt()
+        submitTaskFor(
+            chatContext,
+            selectModel1.selectionModel.selectedItem,
+            chatViewModel.outputModel1,
+            ::updateChatContext1
+        )
     }
 
     fun likeModel1(actionEvent: ActionEvent) {
@@ -160,7 +167,14 @@ class MainController {
     }
 
     fun resendModel2(actionEvent: ActionEvent) {
-
+        chatViewModel.clearModel2Output()
+        val chatContext: String = chatViewModel.safePrompt()
+        submitTaskFor(
+            chatContext,
+            selectModel2.selectionModel.selectedItem,
+            chatViewModel.outputModel2,
+            ::updateChatContext2
+        )
     }
 
     fun likeModel2(actionEvent: ActionEvent) {
@@ -168,7 +182,14 @@ class MainController {
     }
 
     fun resendModel3(actionEvent: ActionEvent) {
-
+        chatViewModel.clearModel3Output()
+        val chatContext: String = chatViewModel.safePrompt()
+        submitTaskFor(
+            chatContext,
+            selectModel3.selectionModel.selectedItem,
+            chatViewModel.outputModel3,
+            ::updateChatContext3
+        )
     }
 
     fun likeModel3(actionEvent: ActionEvent) {

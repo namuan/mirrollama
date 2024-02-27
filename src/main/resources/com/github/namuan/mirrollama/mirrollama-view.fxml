@@ -36,8 +36,8 @@
                                                   promptText="Select model 1"/>
                                         <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <TextArea fx:id="txtModel1" prefHeight="200.0" prefWidth="200.0"
-                                                          text="Model 1" wrapText="true"/>
+                                                <TextArea fx:id="txtModel1" editable="false" prefHeight="200.0"
+                                                          prefWidth="200.0" text="Model 1" wrapText="true"/>
                                                 <ProgressIndicator fx:id="progressModel1"/>
                                                 <Button fx:id="btnResendModel1" mnemonicParsing="false"
                                                         onAction="#resendModel1" text="" textAlignment="CENTER"
@@ -77,8 +77,8 @@
                                           promptText="Select model 2"/>
                                 <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                     <children>
-                                        <TextArea fx:id="txtModel2" prefHeight="200.0" prefWidth="200.0" text="Model 2"
-                                                  wrapText="true"/>
+                                        <TextArea fx:id="txtModel2" editable="false" prefHeight="200.0"
+                                                  prefWidth="200.0" text="Model 2" wrapText="true"/>
                                         <ProgressIndicator fx:id="progressModel2"/>
                                         <Button fx:id="btnResendModel2" mnemonicParsing="false" onAction="#resendModel2"
                                                 text="" textAlignment="CENTER" StackPane.alignment="BOTTOM_RIGHT">
@@ -117,8 +117,8 @@
                                                   promptText="Select model 3"/>
                                         <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                             <children>
-                                                <TextArea fx:id="txtModel3" prefHeight="200.0" prefWidth="200.0"
-                                                          text="Model 3&#10;" wrapText="true"/>
+                                                <TextArea fx:id="txtModel3" editable="false" prefHeight="200.0"
+                                                          prefWidth="200.0" text="Model 3&#10;" wrapText="true"/>
                                                 <ProgressIndicator fx:id="progressModel3"/>
                                                 <Button fx:id="btnResendModel3" mnemonicParsing="false"
                                                         onAction="#resendModel3" text="" textAlignment="CENTER"

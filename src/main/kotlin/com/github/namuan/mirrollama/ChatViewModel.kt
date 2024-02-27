@@ -39,10 +39,22 @@ class ChatViewModel {
     }
 
     fun clearAllOutputs() {
+        clearModel1Output()
+        clearModel2Output()
+        clearModel3Output()
+    }
+
+    fun clearModel1Output() {
         outputModel1.set("")
         showModel1Progress.set(true)
+    }
+
+    fun clearModel2Output() {
         outputModel2.set("")
         showModel2Progress.set(true)
+    }
+
+    fun clearModel3Output() {
         outputModel3.set("")
         showModel3Progress.set(true)
     }
