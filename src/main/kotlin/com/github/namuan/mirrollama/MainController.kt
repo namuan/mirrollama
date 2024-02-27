@@ -163,10 +163,6 @@ class MainController {
         )
     }
 
-    fun likeModel1(actionEvent: ActionEvent) {
-
-    }
-
     fun resendModel2(actionEvent: ActionEvent) {
         chatViewModel.clearModel2Output()
         val chatContext: String = chatViewModel.safePrompt()
@@ -178,10 +174,6 @@ class MainController {
         )
     }
 
-    fun likeModel2(actionEvent: ActionEvent) {
-
-    }
-
     fun resendModel3(actionEvent: ActionEvent) {
         chatViewModel.clearModel3Output()
         val chatContext: String = chatViewModel.safePrompt()
@@ -191,10 +183,6 @@ class MainController {
             chatViewModel.outputModel3,
             ::updateChatContext3
         )
-    }
-
-    fun likeModel3(actionEvent: ActionEvent) {
-
     }
 
     fun onQuit(actionEvent: ActionEvent) {
