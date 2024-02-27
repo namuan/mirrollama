@@ -1,5 +1,6 @@
 package com.github.namuan.mirrollama
 
+import javafx.application.Platform
 import javafx.beans.property.StringProperty
 import javafx.event.ActionEvent
 import javafx.scene.Node
@@ -194,5 +195,10 @@ class MainController {
 
     fun likeModel3(actionEvent: ActionEvent) {
 
+    }
+
+    fun onQuit(actionEvent: ActionEvent) {
+        close()
+        Platform.exit()
     }
 }
