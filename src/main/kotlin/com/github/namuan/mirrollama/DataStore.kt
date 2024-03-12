@@ -51,6 +51,15 @@ class DatabaseManager(databasePath: String) {
            )
         """.trimIndent()
         )
+
+        executeUpdate(
+            """
+            CREATE TABLE IF NOT EXISTS model_scores (
+                name TEXT PRIMARY KEY UNIQUE,
+                score INTEGER NOT NULL DEFAULT 1
+            )
+            """.trimIndent()
+        )
     }
 
     fun insertUser(name: String, age: Int) {
@@ -61,6 +70,14 @@ class DatabaseManager(databasePath: String) {
     fun insertModelResponse(modelName: String, prompt: String, response: String) {
         val sql = "INSERT INTO model_responses(model_name, prompt, response, createdAt) VALUES(?, ?, ?, ?)"
         executeUpdate(sql, modelName, prompt, response, Date().toString())
+    }
+
+    fun updateScore(name: String) {
+        val sql = """
+            INSERT INTO model_scores(name, score) VALUES ('${name}', 1)
+                ON CONFLICT(name) DO UPDATE SET score=score+1;
+        """.trimIndent()
+        executeUpdate(sql)
     }
 
     fun getUsers(): List<User> {

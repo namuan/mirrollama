@@ -189,4 +189,19 @@ class MainController {
         close()
         Platform.exit()
     }
+
+    fun likeModel1(actionEvent: ActionEvent) {
+        val selectedModel1 = selectModel1.selectionModel.selectedItem
+        databaseManager.updateScore(selectedModel1)
+    }
+
+    fun likeModel2(actionEvent: ActionEvent) {
+        val selectedModel2 = selectModel2.selectionModel.selectedItem
+        databaseManager.updateScore(selectedModel2)
+    }
+
+    fun likeModel3(actionEvent: ActionEvent) {
+        val selectedModel3 = selectModel3.selectionModel.selectedItem
+        databaseManager.updateScore(selectedModel3)
+    }
 }
