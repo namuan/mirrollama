@@ -20,14 +20,17 @@ class MainController {
     lateinit var txtModel1: TextArea
     lateinit var selectModel1: ComboBox<String>
     lateinit var progressModel1: ProgressIndicator
+    lateinit var btnLikeModel1: Button
 
     lateinit var txtModel2: TextArea
     lateinit var selectModel2: ComboBox<String>
     lateinit var progressModel2: ProgressIndicator
+    lateinit var btnLikeModel2: Button
 
     lateinit var txtModel3: TextArea
     lateinit var selectModel3: ComboBox<String>
     lateinit var progressModel3: ProgressIndicator
+    lateinit var btnLikeModel3: Button
 
     lateinit var txtPrompt: TextArea
     lateinit var btnSend: Button
@@ -46,6 +49,9 @@ class MainController {
         progressModel1.visibleProperty().bindBidirectional(chatViewModel.showModel1Progress)
         progressModel2.visibleProperty().bindBidirectional(chatViewModel.showModel2Progress)
         progressModel3.visibleProperty().bindBidirectional(chatViewModel.showModel3Progress)
+        btnLikeModel1.visibleProperty().bindBidirectional(chatViewModel.enableModel1Like)
+        btnLikeModel2.visibleProperty().bindBidirectional(chatViewModel.enableModel2Like)
+        btnLikeModel3.visibleProperty().bindBidirectional(chatViewModel.enableModel3Like)
     }
 
     private fun updateChatContext1(chatContext: String) {
@@ -193,15 +199,18 @@ class MainController {
     fun likeModel1(actionEvent: ActionEvent) {
         val selectedModel1 = selectModel1.selectionModel.selectedItem
         databaseManager.updateScore(selectedModel1)
+        chatViewModel.disableModel1Like()
     }
 
     fun likeModel2(actionEvent: ActionEvent) {
         val selectedModel2 = selectModel2.selectionModel.selectedItem
         databaseManager.updateScore(selectedModel2)
+        chatViewModel.disableModel2Like()
     }
 
     fun likeModel3(actionEvent: ActionEvent) {
         val selectedModel3 = selectModel3.selectionModel.selectedItem
         databaseManager.updateScore(selectedModel3)
+        chatViewModel.disableModel3Like()
     }
 }

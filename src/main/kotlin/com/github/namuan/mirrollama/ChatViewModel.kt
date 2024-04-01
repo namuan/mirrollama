@@ -14,6 +14,9 @@ class ChatViewModel {
     val showModel1Progress: BooleanProperty = SimpleBooleanProperty(false)
     val showModel2Progress: BooleanProperty = SimpleBooleanProperty(false)
     val showModel3Progress: BooleanProperty = SimpleBooleanProperty(false)
+    val enableModel1Like: BooleanProperty = SimpleBooleanProperty(true)
+    val enableModel2Like: BooleanProperty = SimpleBooleanProperty(true)
+    val enableModel3Like: BooleanProperty = SimpleBooleanProperty(true)
 
     fun disableNewRequests() {
         disablePrompting.set(true)
@@ -21,6 +24,9 @@ class ChatViewModel {
 
     fun enableNewRequests() {
         disablePrompting.set(false)
+        enableModel1Like.set(true)
+        enableModel2Like.set(true)
+        enableModel3Like.set(true)
     }
 
     fun updateChatContext1(promptResponse: String) {
@@ -57,6 +63,18 @@ class ChatViewModel {
     fun clearModel3Output() {
         outputModel3.set("")
         showModel3Progress.set(true)
+    }
+
+    fun disableModel1Like() {
+        enableModel1Like.set(false)
+    }
+
+    fun disableModel2Like() {
+        enableModel2Like.set(false)
+    }
+
+    fun disableModel3Like() {
+        enableModel3Like.set(false)
     }
 
     fun safePrompt() = prompt.get().orEmpty()
