@@ -213,4 +213,31 @@ class MainController {
         databaseManager.updateScore(selectedModel3)
         chatViewModel.disableModel3Like()
     }
+
+    fun onMixIt(actionEvent: ActionEvent) {
+        val mixtureChatContext: String = chatViewModel.safeMixItPromptWith(
+            chatViewModel.outputModel1.get().orEmpty(),
+            chatViewModel.outputModel2.get().orEmpty(),
+            chatViewModel.outputModel3.get().orEmpty(),
+        )
+        chatViewModel.clearAllOutputs()
+        submitTaskFor(
+            mixtureChatContext,
+            selectModel1.selectionModel.selectedItem,
+            chatViewModel.outputModel1,
+            ::updateChatContext1
+        )
+        submitTaskFor(
+            mixtureChatContext,
+            selectModel2.selectionModel.selectedItem,
+            chatViewModel.outputModel2,
+            ::updateChatContext2
+        )
+        submitTaskFor(
+            mixtureChatContext,
+            selectModel3.selectionModel.selectedItem,
+            chatViewModel.outputModel3,
+            ::updateChatContext3
+        )
+    }
 }

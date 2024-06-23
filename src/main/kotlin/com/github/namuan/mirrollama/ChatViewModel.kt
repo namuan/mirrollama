@@ -78,4 +78,15 @@ class ChatViewModel {
     }
 
     fun safePrompt() = prompt.get().orEmpty()
+
+    fun safeMixItPromptWith(output1: String, output2: String, output3: String): String {
+        return safeMixItPrompt() + "\n" + output1 + "\n" + output2 + "\n" + output3
+    }
+
+    // Prompt from https://github.com/severian42/MoA-Ollama-ChatApp/blob/main/utils.py
+    private fun safeMixItPrompt(): String {
+        return """
+            You have been provided with a set of responses from various open-source models to the latest user query. Your task is to synthesize these responses into a single, high-quality response. It is crucial to critically evaluate the information provided in these responses, recognizing that some of it may be biased or incorrect. Your response should not simply replicate the given answers but should offer a refined, accurate, and comprehensive reply to the instruction. Ensure your response is well-structured, coherent, and adheres to the highest standards of accuracy and reliability.
+        """.trimIndent()
+    }
 }
