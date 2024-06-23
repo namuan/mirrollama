@@ -38,7 +38,7 @@
                                                         onAction="#likeModel1" text=""
                                                         StackPane.alignment="BOTTOM_RIGHT">
                                                     <StackPane.margin>
-                                                        <Insets bottom="10.0" right="60.0"/>
+                                                        <Insets bottom="10.0" right="100.0"/>
                                                     </StackPane.margin>
                                                     <font>
                                                         <Font name="Wingdings" size="13.0"/>
@@ -53,6 +53,16 @@
                                                     <font>
                                                         <Font name="Wingdings 3" size="13.0"/>
                                                     </font>
+                                                </Button>
+                                                <Button fx:id="btnMixItModel11" mnemonicParsing="false"
+                                                        onAction="#mixItModel1" text=""
+                                                        StackPane.alignment="BOTTOM_RIGHT">
+                                                    <font>
+                                                        <Font name="Wingdings" size="13.0"/>
+                                                    </font>
+                                                    <StackPane.margin>
+                                                        <Insets bottom="10.0" right="60.0"/>
+                                                    </StackPane.margin>
                                                 </Button>
                                             </children>
                                             <VBox.margin>
@@ -80,7 +90,7 @@
                                                 <Font name="Wingdings" size="13.0"/>
                                             </font>
                                             <StackPane.margin>
-                                                <Insets bottom="10.0" right="60.0"/>
+                                                <Insets bottom="10.0" right="100.0"/>
                                             </StackPane.margin>
                                         </Button>
                                         <Button fx:id="btnResendModel2" mnemonicParsing="false" onAction="#resendModel2"
@@ -91,6 +101,15 @@
                                             <font>
                                                 <Font name="Wingdings 3" size="13.0"/>
                                             </font>
+                                        </Button>
+                                        <Button fx:id="btnMixItModel2" mnemonicParsing="false" onAction="#mixItModel2"
+                                                text="" StackPane.alignment="BOTTOM_RIGHT">
+                                            <font>
+                                                <Font name="Wingdings" size="13.0"/>
+                                            </font>
+                                            <StackPane.margin>
+                                                <Insets bottom="10.0" right="60.0"/>
+                                            </StackPane.margin>
                                         </Button>
                                     </children>
                                     <VBox.margin>
@@ -118,7 +137,7 @@
                                                         onAction="#likeModel3" text=""
                                                         StackPane.alignment="BOTTOM_RIGHT">
                                                     <StackPane.margin>
-                                                        <Insets bottom="10.0" right="60.0"/>
+                                                        <Insets bottom="10.0" right="100.0"/>
                                                     </StackPane.margin>
                                                     <font>
                                                         <Font name="Wingdings" size="13.0"/>
@@ -133,6 +152,16 @@
                                                     <font>
                                                         <Font name="Wingdings 3" size="13.0"/>
                                                     </font>
+                                                </Button>
+                                                <Button fx:id="btnMixItModel3" mnemonicParsing="false"
+                                                        onAction="#mixItModel3" text=""
+                                                        StackPane.alignment="BOTTOM_RIGHT">
+                                                    <font>
+                                                        <Font name="Wingdings" size="13.0"/>
+                                                    </font>
+                                                    <StackPane.margin>
+                                                        <Insets bottom="10.0" right="60.0"/>
+                                                    </StackPane.margin>
                                                 </Button>
                                             </children>
                                             <VBox.margin>
