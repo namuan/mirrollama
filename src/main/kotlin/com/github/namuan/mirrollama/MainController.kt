@@ -6,8 +6,8 @@ import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.ComboBox
-import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TextArea
+import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
@@ -19,17 +19,17 @@ class MainController {
 
     lateinit var txtModel1: TextArea
     lateinit var selectModel1: ComboBox<String>
-    lateinit var progressModel1: ProgressIndicator
+    lateinit var loadingScreenModel1: ImageView
     lateinit var btnLikeModel1: Button
 
     lateinit var txtModel2: TextArea
     lateinit var selectModel2: ComboBox<String>
-    lateinit var progressModel2: ProgressIndicator
+    lateinit var loadingScreenModel2: ImageView
     lateinit var btnLikeModel2: Button
 
     lateinit var txtModel3: TextArea
     lateinit var selectModel3: ComboBox<String>
-    lateinit var progressModel3: ProgressIndicator
+    lateinit var loadingScreenModel3: ImageView
     lateinit var btnLikeModel3: Button
 
     lateinit var txtPrompt: TextArea
@@ -46,9 +46,9 @@ class MainController {
         txtModel1.textProperty().bindBidirectional(chatViewModel.outputModel1)
         txtModel2.textProperty().bindBidirectional(chatViewModel.outputModel2)
         txtModel3.textProperty().bindBidirectional(chatViewModel.outputModel3)
-        progressModel1.visibleProperty().bindBidirectional(chatViewModel.showModel1Progress)
-        progressModel2.visibleProperty().bindBidirectional(chatViewModel.showModel2Progress)
-        progressModel3.visibleProperty().bindBidirectional(chatViewModel.showModel3Progress)
+        loadingScreenModel1.visibleProperty().bindBidirectional(chatViewModel.showModel1Progress)
+        loadingScreenModel2.visibleProperty().bindBidirectional(chatViewModel.showModel2Progress)
+        loadingScreenModel3.visibleProperty().bindBidirectional(chatViewModel.showModel3Progress)
         btnLikeModel1.visibleProperty().bindBidirectional(chatViewModel.enableModel1Like)
         btnLikeModel2.visibleProperty().bindBidirectional(chatViewModel.enableModel2Like)
         btnLikeModel3.visibleProperty().bindBidirectional(chatViewModel.enableModel3Like)
@@ -263,7 +263,6 @@ class MainController {
             chatViewModel.outputModel3.get().orEmpty(),
         )
         chatViewModel.clearModel2Output()
-        chatViewModel.safePrompt()
         submitTaskFor(
             mixtureChatContext,
             selectModel2.selectionModel.selectedItem,
@@ -279,7 +278,6 @@ class MainController {
             chatViewModel.outputModel3.get().orEmpty(),
         )
         chatViewModel.clearModel3Output()
-        chatViewModel.safePrompt()
         submitTaskFor(
             mixtureChatContext,
             selectModel3.selectionModel.selectedItem,

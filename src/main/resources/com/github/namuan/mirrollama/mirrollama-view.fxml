@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.*?>
@@ -33,7 +34,12 @@
                                             <children>
                                                 <TextArea fx:id="txtModel1" editable="false" text="Model 1"
                                                           wrapText="true"/>
-                                                <ProgressIndicator fx:id="progressModel1"/>
+                                                <ImageView fx:id="loadingScreenModel1" fitHeight="150.0"
+                                                           fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../../../../breath-loading.gif"/>
+                                                    </image>
+                                                </ImageView>
                                                 <Button fx:id="btnLikeModel1" mnemonicParsing="false"
                                                         onAction="#likeModel1" text=""
                                                         StackPane.alignment="BOTTOM_RIGHT">
@@ -54,7 +60,7 @@
                                                         <Font name="Wingdings 3" size="13.0"/>
                                                     </font>
                                                 </Button>
-                                                <Button fx:id="btnMixItModel11" mnemonicParsing="false"
+                                                <Button fx:id="btnMixItModel1" mnemonicParsing="false"
                                                         onAction="#mixItModel1" text=""
                                                         StackPane.alignment="BOTTOM_RIGHT">
                                                     <font>
@@ -83,7 +89,12 @@
                                 <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                     <children>
                                         <TextArea fx:id="txtModel2" editable="false" text="Model 2" wrapText="true"/>
-                                        <ProgressIndicator fx:id="progressModel2"/>
+                                        <ImageView fx:id="loadingScreenModel2" fitHeight="150.0" fitWidth="200.0"
+                                                   pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../../../../breath-loading.gif"/>
+                                            </image>
+                                        </ImageView>
                                         <Button fx:id="btnLikeModel2" mnemonicParsing="false" onAction="#likeModel2"
                                                 text="" StackPane.alignment="BOTTOM_RIGHT">
                                             <font>
@@ -132,7 +143,12 @@
                                             <children>
                                                 <TextArea fx:id="txtModel3" editable="false" text="Model 3"
                                                           wrapText="true"/>
-                                                <ProgressIndicator fx:id="progressModel3"/>
+                                                <ImageView fx:id="loadingScreenModel3" fitHeight="150.0"
+                                                           fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../../../../breath-loading.gif"/>
+                                                    </image>
+                                                </ImageView>
                                                 <Button fx:id="btnLikeModel3" mnemonicParsing="false"
                                                         onAction="#likeModel3" text=""
                                                         StackPane.alignment="BOTTOM_RIGHT">
