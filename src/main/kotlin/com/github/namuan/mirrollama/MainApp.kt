@@ -1,5 +1,7 @@
 package com.github.namuan.mirrollama
 
+import com.github.namuan.mirrollama.config.setupConfig
+import com.github.namuan.mirrollama.ui.MainView
 import javafx.application.Application
 import javafx.stage.Stage
 

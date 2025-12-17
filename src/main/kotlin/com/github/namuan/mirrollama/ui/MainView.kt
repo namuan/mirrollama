@@ -1,5 +1,8 @@
-package com.github.namuan.mirrollama
+package com.github.namuan.mirrollama.ui
 
+import com.github.namuan.mirrollama.MainApp
+import com.github.namuan.mirrollama.config.loadPosition
+import com.github.namuan.mirrollama.config.savePosition
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.image.Image

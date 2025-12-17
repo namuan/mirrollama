@@ -1,4 +1,4 @@
-package com.github.namuan.mirrollama
+package com.github.namuan.mirrollama.data
 
 import java.sql.Connection
 import java.sql.DriverManager

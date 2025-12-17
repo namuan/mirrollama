@@ -1,5 +1,6 @@
-package com.github.namuan.mirrollama
+package com.github.namuan.mirrollama.config
 
+import com.github.namuan.mirrollama.data.DatabaseManager
 import com.google.gson.Gson
 import mu.KotlinLogging
 

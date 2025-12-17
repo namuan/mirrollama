@@ -1,4 +1,4 @@
-package com.github.namuan.mirrollama
+package com.github.namuan.mirrollama.ui
 
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.SimpleBooleanProperty

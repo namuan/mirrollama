@@ -7,7 +7,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.*?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19"
-      fx:controller="com.github.namuan.mirrollama.MainController">
+      fx:controller="com.github.namuan.mirrollama.ui.MainController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>

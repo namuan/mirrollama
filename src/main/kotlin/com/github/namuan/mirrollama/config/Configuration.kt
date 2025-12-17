@@ -1,4 +1,4 @@
-package com.github.namuan.mirrollama
+package com.github.namuan.mirrollama.config
 
 import com.google.gson.Gson
 import javafx.stage.Stage

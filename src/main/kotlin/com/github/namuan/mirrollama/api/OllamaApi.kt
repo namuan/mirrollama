@@ -1,5 +1,7 @@
-package com.github.namuan.mirrollama
+package com.github.namuan.mirrollama.api
 
+import com.github.namuan.mirrollama.config.gson
+import com.github.namuan.mirrollama.config.logger
 import com.google.gson.annotations.SerializedName
 import javafx.concurrent.Task
 import java.net.URI
