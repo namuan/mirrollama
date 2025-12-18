@@ -11,12 +11,29 @@ class ChatPane(
     private val comboBox: ComboBox<String>,
     private val loading: ImageView,
     private val likeButton: Button,
+    private val resendButton: Button,
+    private val mixItButton: Button,
     val session: ChatModelSession
 ) {
     fun bind() {
         txtArea.textProperty().bindBidirectional(session.output)
         loading.visibleProperty().bindBidirectional(session.showProgress)
         likeButton.visibleProperty().bindBidirectional(session.enableLike)
+    }
+
+    fun bindActions(
+        chatService: ChatService,
+        onResend: (String) -> Unit,
+        onMixIt: () -> String,
+        onModelChanged: () -> Unit
+    ) {
+        likeButton.setOnAction { onLike(chatService) }
+        resendButton.setOnAction { onResend(session.output.get().orEmpty()) }
+        mixItButton.setOnAction {
+            val prompt = onMixIt()
+            onResend(prompt)
+        }
+        comboBox.setOnAction { onModelChanged() }
     }
 
     fun populateModels(models: List<String>) {
