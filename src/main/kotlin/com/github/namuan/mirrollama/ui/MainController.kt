@@ -1,9 +1,9 @@
 package com.github.namuan.mirrollama.ui
 
-import com.github.namuan.mirrollama.config.loadSelectedModels
 import com.github.namuan.mirrollama.config.logger
-import com.github.namuan.mirrollama.config.saveSelectedModels
+import com.github.namuan.mirrollama.config.propertiesFile
 import com.github.namuan.mirrollama.service.ChatService
+import com.github.namuan.mirrollama.service.ConfigurationService
 import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.scene.Node
@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 
 class MainController {
+    private val configurationService = ConfigurationService(propertiesFile)
     private val chatService = ChatService()
     private val chatViewModel = ChatViewModel()
     private val chatPanes = mutableListOf<ChatPane>()
@@ -90,7 +91,8 @@ class MainController {
 
     private fun loadAvailableModels() {
         chatService.loadAvailableModels { availableModels ->
-            val (model1, model2, model3) = loadSelectedModels()
+            val selectedModels = configurationService.loadSelectedModels()
+            val (model1, model2, model3) = Triple(selectedModels[0], selectedModels[1], selectedModels[2])
             logger.debug { "Loaded selected models: $model1, $model2, $model3" }
             chatPanes.forEach { it.populateModels(availableModels) }
             chatViewModel.enableNewRequests()
@@ -106,10 +108,12 @@ class MainController {
     }
 
     fun modelChanged(actionEvent: ActionEvent) {
-        saveSelectedModels(
-            chatPanes[0].getSelectedModel(),
-            chatPanes[1].getSelectedModel(),
-            chatPanes[2].getSelectedModel()
+        configurationService.saveSelectedModels(
+            listOf(
+                chatPanes[0].getSelectedModel(),
+                chatPanes[1].getSelectedModel(),
+                chatPanes[2].getSelectedModel()
+            )
         )
     }
 
@@ -178,10 +182,7 @@ class MainController {
     }
 
     private fun getMixItContext(): String {
-        return chatViewModel.safeMixItPromptWith(
-            chatPanes[0].session.output.get().orEmpty(),
-            chatPanes[1].session.output.get().orEmpty(),
-            chatPanes[2].session.output.get().orEmpty(),
-        )
+        val outputs = chatPanes.map { it.session.output.get().orEmpty() }
+        return chatViewModel.safeMixItPromptWith(outputs)
     }
 }

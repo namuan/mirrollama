@@ -54,8 +54,8 @@ class ChatViewModel {
 
     fun safePrompt() = prompt.get().orEmpty()
 
-    fun safeMixItPromptWith(output1: String, output2: String, output3: String): String {
-        return safeMixItPrompt() + "\n" + output1 + "\n" + output2 + "\n" + output3
+    fun safeMixItPromptWith(outputs: List<String>): String {
+        return safeMixItPrompt() + "\n" + outputs.joinToString("\n")
     }
 
     // Prompt from https://github.com/severian42/MoA-Ollama-ChatApp/blob/main/utils.py

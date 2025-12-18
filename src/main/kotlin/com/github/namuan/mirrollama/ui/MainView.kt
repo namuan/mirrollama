@@ -1,14 +1,16 @@
 package com.github.namuan.mirrollama.ui
 
 import com.github.namuan.mirrollama.MainApp
-import com.github.namuan.mirrollama.config.loadPosition
-import com.github.namuan.mirrollama.config.savePosition
+import com.github.namuan.mirrollama.config.propertiesFile
+import com.github.namuan.mirrollama.service.ConfigurationService
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
 
 class MainView(private val title: String) {
+    private val configurationService = ConfigurationService(propertiesFile)
+
     fun setup(stage: Stage) {
         val fxmlLoader = FXMLLoader(MainApp::class.java.getResource("mirrollama-view.fxml"))
         val scene = Scene(fxmlLoader.load(), 800.0, 600.0)
@@ -20,7 +22,7 @@ class MainView(private val title: String) {
         val image = Image("app.png")
         stage.icons.add(image)
 
-        loadPosition(stage)
+        configurationService.loadPosition(stage)
 
         val mainController = fxmlLoader.getController<MainController>()
         mainController.bindShortcuts()
@@ -29,7 +31,7 @@ class MainView(private val title: String) {
 
         stage.setOnCloseRequest { _ ->
             mainController.close()
-            savePosition(stage)
+            configurationService.savePosition(stage)
         }
     }
 }
