@@ -7,7 +7,6 @@ import com.github.namuan.mirrollama.config.loadSelectedModels
 import com.github.namuan.mirrollama.config.logger
 import com.github.namuan.mirrollama.config.saveSelectedModels
 import javafx.application.Platform
-import javafx.beans.property.StringProperty
 import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -22,6 +21,7 @@ import java.util.concurrent.Executors
 class MainController {
     private val executorService = Executors.newSingleThreadExecutor()
     private val chatViewModel = ChatViewModel()
+    private val chatPanes = mutableListOf<ChatPane>()
 
     lateinit var txtModel1: TextArea
     lateinit var selectModel1: ComboBox<String>
@@ -49,72 +49,43 @@ class MainController {
     fun bindViewModel() {
         txtPrompt.textProperty().bindBidirectional(chatViewModel.prompt)
         btnSend.disableProperty().bindBidirectional(chatViewModel.disablePrompting)
-        txtModel1.textProperty().bindBidirectional(chatViewModel.outputModel1)
-        txtModel2.textProperty().bindBidirectional(chatViewModel.outputModel2)
-        txtModel3.textProperty().bindBidirectional(chatViewModel.outputModel3)
-        loadingScreenModel1.visibleProperty().bindBidirectional(chatViewModel.showModel1Progress)
-        loadingScreenModel2.visibleProperty().bindBidirectional(chatViewModel.showModel2Progress)
-        loadingScreenModel3.visibleProperty().bindBidirectional(chatViewModel.showModel3Progress)
-        btnLikeModel1.visibleProperty().bindBidirectional(chatViewModel.enableModel1Like)
-        btnLikeModel2.visibleProperty().bindBidirectional(chatViewModel.enableModel2Like)
-        btnLikeModel3.visibleProperty().bindBidirectional(chatViewModel.enableModel3Like)
-    }
 
-    private fun updateChatContext1(chatContext: String) {
-        chatViewModel.updateChatContext1(chatContext)
-    }
+        chatPanes.clear()
+        chatPanes.add(ChatPane(txtModel1, selectModel1, loadingScreenModel1, btnLikeModel1, chatViewModel.modelSessions[0]))
+        chatPanes.add(ChatPane(txtModel2, selectModel2, loadingScreenModel2, btnLikeModel2, chatViewModel.modelSessions[1]))
+        chatPanes.add(ChatPane(txtModel3, selectModel3, loadingScreenModel3, btnLikeModel3, chatViewModel.modelSessions[2]))
 
-    private fun updateChatContext2(chatContext: String) {
-        chatViewModel.updateChatContext2(chatContext)
-    }
-
-    private fun updateChatContext3(chatContext: String) {
-        chatViewModel.updateChatContext3(chatContext)
+        chatPanes.forEach { it.bind() }
     }
 
     fun onSendPrompt(actionEvent: ActionEvent) {
         chatViewModel.clearAllOutputs()
 
         val chatContext: String = chatViewModel.safePrompt()
-        submitTaskFor(
-            chatContext,
-            selectModel1.selectionModel.selectedItem,
-            chatViewModel.outputModel1,
-            ::updateChatContext1
-        )
-        submitTaskFor(
-            chatContext,
-            selectModel2.selectionModel.selectedItem,
-            chatViewModel.outputModel2,
-            ::updateChatContext2
-        )
-        submitTaskFor(
-            chatContext,
-            selectModel3.selectionModel.selectedItem,
-            chatViewModel.outputModel3,
-            ::updateChatContext3
-        )
+        chatPanes.forEach { pane ->
+            submitTaskFor(chatContext, pane)
+        }
     }
 
     private fun submitTaskFor(
         chatContext: String,
-        selectedModel: String,
-        outputProperty: StringProperty,
-        callback: (String) -> Unit,
+        chatPane: ChatPane
     ) {
-        val task = OllamaCompletionApiTask(selectedModel, chatContext, callback)
+        val selectedModel = chatPane.getSelectedModel() ?: return
+
+        val task = OllamaCompletionApiTask(selectedModel, chatContext, chatPane::updateChatContext)
         task.setOnSucceeded {
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
             databaseManager.insertModelResponse(
                 selectedModel,
                 chatContext,
-                outputProperty.value
+                chatPane.session.output.value
             )
         }
         task.setOnFailed {
             val errorMessage = task.exception.stackTraceToString()
-            callback(errorMessage)
+            chatPane.updateChatContext(errorMessage)
             chatViewModel.enableNewRequests()
             txtPrompt.selectPositionCaret(txtPrompt.text.length)
         }
@@ -137,9 +108,7 @@ class MainController {
         task.setOnSucceeded {
             val (model1, model2, model3) = loadSelectedModels()
             logger.debug { "Loaded selected models: $model1, $model2, $model3" }
-            selectModel1.items.addAll(task.value)
-            selectModel2.items.addAll(task.value)
-            selectModel3.items.addAll(task.value)
+            chatPanes.forEach { it.populateModels(task.value) }
             chatViewModel.enableNewRequests()
             updateSelectedModels(model1, model2, model3)
         }
@@ -147,16 +116,17 @@ class MainController {
     }
 
     private fun updateSelectedModels(model1: String?, model2: String?, model3: String?) {
-        selectModel1.selectionModel.select(model1 ?: selectModel1.items[0])
-        selectModel2.selectionModel.select(model2 ?: selectModel2.items[0])
-        selectModel3.selectionModel.select(model3 ?: selectModel3.items[0])
+        val models = listOf(model1, model2, model3)
+        chatPanes.forEachIndexed { index, pane ->
+            pane.selectModel(models[index])
+        }
     }
 
     fun modelChanged(actionEvent: ActionEvent) {
         saveSelectedModels(
-            selectModel1.selectionModel.selectedItem,
-            selectModel2.selectionModel.selectedItem,
-            selectModel3.selectionModel.selectedItem
+            chatPanes[0].getSelectedModel(),
+            chatPanes[1].getSelectedModel(),
+            chatPanes[2].getSelectedModel()
         )
     }
 
@@ -165,36 +135,21 @@ class MainController {
     }
 
     fun resendModel1(actionEvent: ActionEvent) {
-        chatViewModel.clearModel1Output()
-        val chatContext: String = chatViewModel.safePrompt()
-        submitTaskFor(
-            chatContext,
-            selectModel1.selectionModel.selectedItem,
-            chatViewModel.outputModel1,
-            ::updateChatContext1
-        )
+        resendModel(0)
     }
 
     fun resendModel2(actionEvent: ActionEvent) {
-        chatViewModel.clearModel2Output()
-        val chatContext: String = chatViewModel.safePrompt()
-        submitTaskFor(
-            chatContext,
-            selectModel2.selectionModel.selectedItem,
-            chatViewModel.outputModel2,
-            ::updateChatContext2
-        )
+        resendModel(1)
     }
 
     fun resendModel3(actionEvent: ActionEvent) {
-        chatViewModel.clearModel3Output()
-        val chatContext: String = chatViewModel.safePrompt()
-        submitTaskFor(
-            chatContext,
-            selectModel3.selectionModel.selectedItem,
-            chatViewModel.outputModel3,
-            ::updateChatContext3
-        )
+        resendModel(2)
+    }
+    
+    private fun resendModel(index: Int) {
+        val pane = chatPanes[index]
+        pane.clearOutput()
+        submitTaskFor(chatViewModel.safePrompt(), pane)
     }
 
     fun onQuit(actionEvent: ActionEvent) {
@@ -203,92 +158,56 @@ class MainController {
     }
 
     fun likeModel1(actionEvent: ActionEvent) {
-        val selectedModel1 = selectModel1.selectionModel.selectedItem
-        databaseManager.updateScore(selectedModel1)
-        chatViewModel.disableModel1Like()
+        likeModel(0)
     }
 
     fun likeModel2(actionEvent: ActionEvent) {
-        val selectedModel2 = selectModel2.selectionModel.selectedItem
-        databaseManager.updateScore(selectedModel2)
-        chatViewModel.disableModel2Like()
+        likeModel(1)
     }
 
     fun likeModel3(actionEvent: ActionEvent) {
-        val selectedModel3 = selectModel3.selectionModel.selectedItem
-        databaseManager.updateScore(selectedModel3)
-        chatViewModel.disableModel3Like()
+        likeModel(2)
+    }
+    
+    private fun likeModel(index: Int) {
+        val pane = chatPanes[index]
+        val selectedModel = pane.getSelectedModel()
+        if (selectedModel != null) {
+            databaseManager.updateScore(selectedModel)
+        }
+        pane.session.disableLike()
     }
 
     fun onMixIt(actionEvent: ActionEvent) {
-        val mixtureChatContext: String = chatViewModel.safeMixItPromptWith(
-            chatViewModel.outputModel1.get().orEmpty(),
-            chatViewModel.outputModel2.get().orEmpty(),
-            chatViewModel.outputModel3.get().orEmpty(),
-        )
+        val mixtureChatContext: String = getMixItContext()
         chatViewModel.clearAllOutputs()
-        submitTaskFor(
-            mixtureChatContext,
-            selectModel1.selectionModel.selectedItem,
-            chatViewModel.outputModel1,
-            ::updateChatContext1
-        )
-        submitTaskFor(
-            mixtureChatContext,
-            selectModel2.selectionModel.selectedItem,
-            chatViewModel.outputModel2,
-            ::updateChatContext2
-        )
-        submitTaskFor(
-            mixtureChatContext,
-            selectModel3.selectionModel.selectedItem,
-            chatViewModel.outputModel3,
-            ::updateChatContext3
-        )
+        chatPanes.forEach { submitTaskFor(mixtureChatContext, it) }
     }
 
     fun mixItModel1(actionEvent: ActionEvent) {
-        val mixtureChatContext: String = chatViewModel.safeMixItPromptWith(
-            chatViewModel.outputModel1.get().orEmpty(),
-            chatViewModel.outputModel2.get().orEmpty(),
-            chatViewModel.outputModel3.get().orEmpty(),
-        )
-        chatViewModel.clearModel1Output()
-        submitTaskFor(
-            mixtureChatContext,
-            selectModel1.selectionModel.selectedItem,
-            chatViewModel.outputModel1,
-            ::updateChatContext1
-        )
+        mixItModel(0)
     }
 
     fun mixItModel2(actionEvent: ActionEvent) {
-        val mixtureChatContext: String = chatViewModel.safeMixItPromptWith(
-            chatViewModel.outputModel1.get().orEmpty(),
-            chatViewModel.outputModel2.get().orEmpty(),
-            chatViewModel.outputModel3.get().orEmpty(),
-        )
-        chatViewModel.clearModel2Output()
-        submitTaskFor(
-            mixtureChatContext,
-            selectModel2.selectionModel.selectedItem,
-            chatViewModel.outputModel2,
-            ::updateChatContext2
-        )
+        mixItModel(1)
     }
 
     fun mixItModel3(actionEvent: ActionEvent) {
-        val mixtureChatContext: String = chatViewModel.safeMixItPromptWith(
-            chatViewModel.outputModel1.get().orEmpty(),
-            chatViewModel.outputModel2.get().orEmpty(),
-            chatViewModel.outputModel3.get().orEmpty(),
-        )
-        chatViewModel.clearModel3Output()
-        submitTaskFor(
-            mixtureChatContext,
-            selectModel3.selectionModel.selectedItem,
-            chatViewModel.outputModel3,
-            ::updateChatContext3
+        mixItModel(2)
+    }
+    
+    private fun mixItModel(index: Int) {
+        val mixtureChatContext = getMixItContext()
+        val pane = chatPanes[index]
+        pane.clearOutput()
+        submitTaskFor(mixtureChatContext, pane)
+    }
+    
+    private fun getMixItContext(): String {
+        return chatViewModel.safeMixItPromptWith(
+            chatPanes[0].session.output.get().orEmpty(),
+            chatPanes[1].session.output.get().orEmpty(),
+            chatPanes[2].session.output.get().orEmpty(),
         )
     }
 }
