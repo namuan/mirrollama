@@ -1,11 +1,9 @@
 package com.github.namuan.mirrollama.ui
 
-import com.github.namuan.mirrollama.api.OllamaCompletionApiTask
-import com.github.namuan.mirrollama.api.OllamaModelsApiTask
-import com.github.namuan.mirrollama.config.databaseManager
 import com.github.namuan.mirrollama.config.loadSelectedModels
 import com.github.namuan.mirrollama.config.logger
 import com.github.namuan.mirrollama.config.saveSelectedModels
+import com.github.namuan.mirrollama.service.ChatService
 import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.scene.Node
@@ -16,10 +14,9 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import java.util.concurrent.Executors
 
 class MainController {
-    private val executorService = Executors.newSingleThreadExecutor()
+    private val chatService = ChatService()
     private val chatViewModel = ChatViewModel()
     private val chatPanes = mutableListOf<ChatPane>()
 
@@ -71,27 +68,15 @@ class MainController {
         chatContext: String,
         chatPane: ChatPane
     ) {
-        val selectedModel = chatPane.getSelectedModel() ?: return
-
-        val task = OllamaCompletionApiTask(selectedModel, chatContext, chatPane::updateChatContext)
-        task.setOnSucceeded {
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-            databaseManager.insertModelResponse(
-                selectedModel,
-                chatContext,
-                chatPane.session.output.value
-            )
-        }
-        task.setOnFailed {
-            val errorMessage = task.exception.stackTraceToString()
-            chatPane.updateChatContext(errorMessage)
-            chatViewModel.enableNewRequests()
-            txtPrompt.selectPositionCaret(txtPrompt.text.length)
-        }
-
-        chatViewModel.disableNewRequests()
-        executorService.submit(task)
+        chatPane.processPrompt(
+            prompt = chatContext,
+            chatService = chatService,
+            onStart = { chatViewModel.disableNewRequests() },
+            onComplete = {
+                chatViewModel.enableNewRequests()
+                txtPrompt.selectPositionCaret(txtPrompt.text.length)
+            }
+        )
     }
 
     private fun Node.assignShortcuts(keyCode: KeyCode, trigger: Runnable) {
@@ -104,15 +89,13 @@ class MainController {
     }
 
     private fun loadAvailableModels() {
-        val task = OllamaModelsApiTask()
-        task.setOnSucceeded {
+        chatService.loadAvailableModels { availableModels ->
             val (model1, model2, model3) = loadSelectedModels()
             logger.debug { "Loaded selected models: $model1, $model2, $model3" }
-            chatPanes.forEach { it.populateModels(task.value) }
+            chatPanes.forEach { it.populateModels(availableModels) }
             chatViewModel.enableNewRequests()
             updateSelectedModels(model1, model2, model3)
         }
-        executorService.submit(task)
     }
 
     private fun updateSelectedModels(model1: String?, model2: String?, model3: String?) {
@@ -131,7 +114,7 @@ class MainController {
     }
 
     fun close() {
-        executorService.shutdownNow()
+        chatService.shutdown()
     }
 
     fun resendModel1(actionEvent: ActionEvent) {
@@ -145,11 +128,9 @@ class MainController {
     fun resendModel3(actionEvent: ActionEvent) {
         resendModel(2)
     }
-    
+
     private fun resendModel(index: Int) {
-        val pane = chatPanes[index]
-        pane.clearOutput()
-        submitTaskFor(chatViewModel.safePrompt(), pane)
+        submitTaskFor(chatViewModel.safePrompt(), chatPanes[index])
     }
 
     fun onQuit(actionEvent: ActionEvent) {
@@ -168,14 +149,9 @@ class MainController {
     fun likeModel3(actionEvent: ActionEvent) {
         likeModel(2)
     }
-    
+
     private fun likeModel(index: Int) {
-        val pane = chatPanes[index]
-        val selectedModel = pane.getSelectedModel()
-        if (selectedModel != null) {
-            databaseManager.updateScore(selectedModel)
-        }
-        pane.session.disableLike()
+        chatPanes[index].onLike(chatService)
     }
 
     fun onMixIt(actionEvent: ActionEvent) {
@@ -195,14 +171,12 @@ class MainController {
     fun mixItModel3(actionEvent: ActionEvent) {
         mixItModel(2)
     }
-    
+
     private fun mixItModel(index: Int) {
         val mixtureChatContext = getMixItContext()
-        val pane = chatPanes[index]
-        pane.clearOutput()
-        submitTaskFor(mixtureChatContext, pane)
+        submitTaskFor(mixtureChatContext, chatPanes[index])
     }
-    
+
     private fun getMixItContext(): String {
         return chatViewModel.safeMixItPromptWith(
             chatPanes[0].session.output.get().orEmpty(),
